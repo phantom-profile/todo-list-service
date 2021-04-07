@@ -117,16 +117,15 @@ class Train
 	def show_nearest_stations
 		return 'no route - no stations' if route.nil?
 
-		stations = []
 		train_stops = route.stations
-		case location
-		when 0
-			stations << train_stops[location] << train_stops[location + 1]
-		when route.stations.size - 1
-			stations << train_stops[location - 1] << train_stops[location]
-		else
-			stations << train_stops[location - 1] << train_stops[location] << train_stops[location + 1]
-		end
+		stations = case location
+													when 0
+														[train_stops[location], train_stops[location + 1]]
+													when train_stops.size - 1
+														[train_stops[location - 1], train_stops[location]]
+													else
+														[train_stops[location - 1], train_stops[location], train_stops[location + 1]]
+													end
 		stations.each do |station|
 			puts station.name
 		end
