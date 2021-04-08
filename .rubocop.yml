@@ -1,9 +1,3 @@
-Layout/IndentationStyle:
-  EnforcedStyle: tabs
-
-Layout/IndentationWidth:
-  Width: 1
-
 Metrics/MethodLength:
   Max: 30
 

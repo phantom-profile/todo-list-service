@@ -2,160 +2,159 @@
 
 # Location for trains and also objects included in routs
 class Station
-	attr_accessor :trains, :cargos, :passengers
-	attr_reader :name
+  attr_accessor :trains
+  attr_reader :name
 
-	def initialize(name)
-		@name = name
-		@cargos = 0
-		@passengers = 0
-		@trains = []
-	end
+  def initialize(name)
+    @name = name
+    @trains = []
+  end
 
-	def meet_train(train)
-		trains << train
-		case train.type
-		when 'cargo'
-			self.cargos += 1
-		when 'passenger'
-			self.passengers += 1
-		else
-			'Unknown type train'
-		end
-	end
+  def meet_train(train)
+    trains << train
+  end
 
-	def send_train(train)
-		trains.delete(train)
-		case train.type
-		when 'cargo'
-			self.cargos -= 1
-		when 'passenger'
-			self.passengers -= 1
-		else
-			'Unknown type train'
-		end
-	end
+  def send_train(train)
+    trains.delete(train)
+  end
 
-	def show_trains
-		trains.each do |train|
-			puts train.train_name
-		end
-	end
+  def show_trains
+    trains.each do |train|
+      puts train.train_name
+    end
+  end
 
-	def show_num_in_types
-		puts "Cargo trains - #{cargos}, Passenger trains - #{passengers}"
-	end
+  def cargos_count
+    cargos = 0
+    trains.each do |train|
+      cargos += 1 if train.type == 'cargo'
+    end
+    cargos
+  end
+
+  def passengers_count
+    passengers = 0
+    trains.each do |train|
+      passengers += 1 if train.type == 'passenger'
+    end
+    passengers
+  end
+
+  def show_cargos
+    trains.each do |train|
+      puts train if train.type == 'cargo'
+    end
+  end
+
+  def show_passengers
+    trains.each do |train|
+      puts train if train.type == 'passenger'
+    end
+  end
 end
 
 # Route which contains many stations and also is way for trains
 class Route
-	attr_accessor :stations
+  attr_accessor :stations
 
-	def initialize(start_station, end_station)
-		@stations = [start_station, end_station]
-	end
+  def initialize(start_station, end_station)
+    @stations = [start_station, end_station]
+  end
 
-	def add_mid_station(station)
-		stations.insert(-2, station)
-	end
+  def add_mid_station(station)
+    stations.insert(-2, station)
+  end
 
-	def remove_mid_station(station)
-		stations.delete(station)
-	end
-
-	def show_stations
-		stations.each do |station|
-			puts station.name
-		end
-	end
+  def remove_mid_station(station)
+    stations.delete(station)
+  end
 end
 
 # Train with speed, cars, own type, which locates on station and moves on its rout
 class Train
-	attr_accessor :cars_number, :speed, :location, :route
-	attr_reader :train_name, :type
+  attr_accessor :cars_number, :speed, :current_station_index, :route
+  attr_reader :train_name, :type
 
-	def initialize(train_name, type, cars_number = 10)
-		@train_name = train_name
-		@type = type
-		@cars_number = cars_number
-		@speed = 0
-		@route = nil
-		@location = 0
-	end
+  def initialize(train_name, type, cars_number = 10)
+    @train_name = train_name
+    @type = type
+    @cars_number = cars_number
+    @speed = 0
+  end
 
-	def raise_speed(add_speed)
-		self.speed += add_speed
-	end
+  def raise_speed(add_speed)
+    self.speed += add_speed
+  end
 
-	def stop
-		self.speed = 0
-	end
+  def stop
+    self.speed = 0
+  end
 
-	def add_car
-		if self.speed.zero?
-			self.cars_number += 1
-		else
-			'Need to stop the train'
-		end
-	end
+  def add_car
+    if self.speed.zero?
+      self.cars_number += 1
+    else
+      'Need to stop the train'
+    end
+  end
 
-	def remove_car
-		if self.speed.zero?
-			self.cars_number -= 1
-		else
-			'Need to stop the train'
-		end
-	end
+  def remove_car
+    if self.speed.zero?
+      self.cars_number -= 1
+    else
+      'Need to stop the train'
+    end
+  end
 
-	def take_route(new_route)
-		self.route = new_route
-		self.location = 0
-		route.stations[location].meet_train(self)
-	end
+  def take_route(new_route)
+    self.route = new_route
+    self.current_station_index = 0
+    route.stations[current_station_index].meet_train(self)
+  end
 
-	def show_nearest_stations
-		return 'no route - no stations' if route.nil?
+  def show_current_station
+    return 'no route - no stations' if route.nil?
 
-		train_stops = route.stations
-		stations = case location
-													when 0
-														[train_stops[location], train_stops[location + 1]]
-													when train_stops.size - 1
-														[train_stops[location - 1], train_stops[location]]
-													else
-														[train_stops[location - 1], train_stops[location], train_stops[location + 1]]
-													end
-		stations.each do |station|
-			puts station.name
-		end
-	end
+    route.stations[current_station_index]
+  end
 
-	def move_forward
-		return 'no route - no stations' if route.nil?
+  def show_prev_station
+    return 'no route - no stations' if route.nil?
 
-		return 'raise speed for movement' if speed.zero?
+    route.stations[current_station_index - 1] unless current_station_index.zero?
+  end
 
-		if location != route.stations.size - 1
-			route.stations[location].send_train(self)
-			self.location += 1
-			route.stations[location].meet_train(self)
-		else
-			'Last station, this train terminates here'
-		end
-	end
+  def show_next_station
+    return 'no route - no stations' if route.nil?
 
-	def move_back
-		return 'no route - no stations' if route.nil?
+    route.stations[current_station_index + 1] unless current_station_index == route.stations.size - 1
+  end
 
-		return 'raise speed for movement' if speed.zero?
+  def move_forward
+    return 'no route - no stations' if route.nil?
 
-		if !location.zero?
-			route.stations[location].send_train(self)
-			self.location -= 1
-			route.stations[location].meet_train(self)
-		else
-			'Last station, this train terminates here'
-		end
-	end
+    return 'raise speed for movement' if speed.zero?
+
+    if current_station_index != route.stations.size - 1
+      route.stations[current_station_index].send_train(self)
+      self.current_station_index += 1
+      route.stations[current_station_index].meet_train(self)
+    else
+      'Last station, this train terminates here'
+    end
+  end
+
+  def move_back
+    return 'no route - no stations' if route.nil?
+
+    return 'raise speed for movement' if speed.zero?
+
+    if !current_station_index.zero?
+      route.stations[current_station_index].send_train(self)
+      self.current_station_index -= 1
+      route.stations[current_station_index].meet_train(self)
+    else
+      'Last station, this train terminates here'
+    end
+  end
 end
