@@ -18,38 +18,19 @@ class Station
     trains.delete(train)
   end
 
-  def show_trains
+  def trains_count_by(type)
+    trains_counter = 0
     trains.each do |train|
-      puts train.train_name
+      trains_counter += 1 if train.type == type
     end
   end
 
-  def cargos_count
-    cargos = 0
+  def trains_by(type)
+    typed_trains = []
     trains.each do |train|
-      cargos += 1 if train.type == 'cargo'
+      typed_trains << train if train.type == type
     end
-    cargos
-  end
-
-  def passengers_count
-    passengers = 0
-    trains.each do |train|
-      passengers += 1 if train.type == 'passenger'
-    end
-    passengers
-  end
-
-  def show_cargos
-    trains.each do |train|
-      puts train if train.type == 'cargo'
-    end
-  end
-
-  def show_passengers
-    trains.each do |train|
-      puts train if train.type == 'passenger'
-    end
+    typed_trains
   end
 end
 
@@ -91,68 +72,56 @@ class Train
   end
 
   def add_car
-    if self.speed.zero?
-      self.cars_number += 1
-    else
-      'Need to stop the train'
-    end
+    self.cars_number += 1 if self.speed.zero?
   end
 
   def remove_car
-    if self.speed.zero?
-      self.cars_number -= 1
-    else
-      'Need to stop the train'
-    end
+    self.cars_number -= 1 if self.speed.zero?
   end
 
   def take_route(new_route)
     self.route = new_route
     self.current_station_index = 0
-    route.stations[current_station_index].meet_train(self)
+    current_station.meet_train(self)
   end
 
-  def show_current_station
-    return 'no route - no stations' if route.nil?
+  def current_station
+    return if route.nil?
 
     route.stations[current_station_index]
   end
 
-  def show_prev_station
-    return 'no route - no stations' if route.nil?
+  def prev_station
+    return if route.nil?
 
     route.stations[current_station_index - 1] unless current_station_index.zero?
   end
 
-  def show_next_station
-    return 'no route - no stations' if route.nil?
+  def next_station
+    return if route.nil?
 
     route.stations[current_station_index + 1] unless current_station_index == route.stations.size - 1
   end
 
   def move_forward
-    return 'no route - no stations' if route.nil?
+    return if speed.zero?
 
-    return 'raise speed for movement' if speed.zero?
-
-    if current_station_index != route.stations.size - 1
-      route.stations[current_station_index].send_train(self)
+    if next_station
+      current_station.send_train(self)
       self.current_station_index += 1
-      route.stations[current_station_index].meet_train(self)
+      current_station.meet_train(self)
     else
       'Last station, this train terminates here'
     end
   end
 
   def move_back
-    return 'no route - no stations' if route.nil?
+    return if speed.zero?
 
-    return 'raise speed for movement' if speed.zero?
-
-    if !current_station_index.zero?
-      route.stations[current_station_index].send_train(self)
+    if prev_station
+      current_station.send_train(self)
       self.current_station_index -= 1
-      route.stations[current_station_index].meet_train(self)
+      current_station.meet_train(self)
     else
       'Last station, this train terminates here'
     end
