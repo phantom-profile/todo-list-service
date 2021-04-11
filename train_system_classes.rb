@@ -19,18 +19,11 @@ class Station
   end
 
   def trains_count_by(type)
-    trains_counter = 0
-    trains.each do |train|
-      trains_counter += 1 if train.type == type
-    end
+    trains_by(type).size
   end
 
   def trains_by(type)
-    typed_trains = []
-    trains.each do |train|
-      typed_trains << train if train.type == type
-    end
-    typed_trains
+    trains.filter { |train| train.type == type }
   end
 end
 
@@ -106,24 +99,20 @@ class Train
   def move_forward
     return if speed.zero?
 
-    if next_station
-      current_station.send_train(self)
-      self.current_station_index += 1
-      current_station.meet_train(self)
-    else
-      'Last station, this train terminates here'
-    end
+    return unless next_station
+
+    current_station.send_train(self)
+    self.current_station_index += 1
+    current_station.meet_train(self)
   end
 
   def move_back
     return if speed.zero?
 
-    if prev_station
-      current_station.send_train(self)
-      self.current_station_index -= 1
-      current_station.meet_train(self)
-    else
-      'Last station, this train terminates here'
-    end
+    return unless prev_station
+
+    current_station.send_train(self)
+    self.current_station_index -= 1
+    current_station.meet_train(self)
   end
 end
