@@ -25,6 +25,10 @@ class Station
     trains.filter { |train| train.type == type }
   end
 
+  def to_s
+    "Station - #{name}"
+  end
+
   private
 
   # Client code mustn't have write-access to class attrs directly

@@ -1,27 +1,24 @@
 # frozen_string_literal: true
 
-# Train with speed, cars, own type, which locates on station and moves on its route
+# Train with speed, cars, which locates on station and moves on its route
 class Train
-  attr_reader :train_name, :type
+  attr_reader :train_name, :cars
+  attr_accessor :speed
 
-  def initialize(train_name, type)
+  def initialize(train_name)
     @train_name = train_name
-    @type = type
     @cars = []
     @speed = 0
   end
 
-  def raise_speed(add_speed)
-    self.speed += add_speed
+  def add_car(car)
+    car.change_owner(self)
+    cars << car
   end
 
-  def stop
-    self.speed = 0
+  def remove_car
+    cars.delete_at(-1)
   end
-
-  def add_car; end
-
-  def remove_car; end
 
   def take_route(new_route)
     self.route = new_route
@@ -67,8 +64,13 @@ class Train
     current_station.meet_train(self)
   end
 
+  def to_s
+    "train #{train_name} - type #{type}"
+  end
+
   protected
 
   # all these attrs are needed inside this and child classes but not for client code
-  attr_accessor :speed, :current_station_index, :route, :cars
+  attr_accessor :current_station_index, :route
+  attr_writer :cars
 end

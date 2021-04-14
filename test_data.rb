@@ -2,7 +2,12 @@
 
 require_relative 'route'
 require_relative 'station'
-require_relative 'train'
+
+require_relative 'car_cargo'
+require_relative 'car_passenger'
+
+require_relative 'train_cargo'
+require_relative 'train_passenger'
 
 @s1 = Station.new('Moscow')
 @s2 = Station.new('Volgograd')
@@ -12,8 +17,8 @@ require_relative 'train'
 @r2 = Route.new(@s1, @s3)
 @r2.add_mid_station(@s2)
 
-@t1 = Train.new('Msk-Vlg', 'passenger')
-@t2 = Train.new('Msk-Vlg-Spb', 'cargo')
+@t1 = PassengerTrain.new('Msk-Vlg')
+@t2 = PassengerTrain.new('Msk-Vlg-Spb')
 
-@t1.route = @r1
-@t2.route = @r2
+@t1.take_route(@r1)
+@t2.take_route(@r2)

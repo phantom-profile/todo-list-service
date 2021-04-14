@@ -16,6 +16,10 @@ class Route
     stations.delete(station)
   end
 
+  def to_s
+    "route from #{stations[0]} to #{stations[-1]}"
+  end
+
   private
 
   # Client code mustn't have write-access to class attrs directly
