@@ -11,13 +11,68 @@ require_relative 'train_passenger'
 
 # interface for train railways system control
 class Interface
-
   def initialize
     @trains = []
     @stations = []
     @routes = []
     puts start
   end
+
+  def run!
+    choice = 0
+
+    while choice != 13
+
+      choice = gets.chomp.to_i
+      case choice
+      when 1
+        make_train
+
+      when 2
+        set_train_speed
+
+      when 3
+        add_train_car
+
+      when 4
+        remove_train_car
+
+      when 5
+        make_station
+
+      when 6
+        make_route
+
+      when 7
+        add_or_delete_station
+
+      when 8
+        set_route_for_train
+
+      when 9
+        move_train_forward
+
+      when 10
+        move_train_back
+
+      when 11
+        display_route_stations
+
+      when 12
+        display_station_trains
+
+      when 13
+        end_session
+
+      else
+        puts 'Некорректный ввод'
+      end
+    end
+  end
+
+  private
+
+  attr_accessor :stations, :trains, :routes
 
   def start
     <<~MENU
@@ -123,10 +178,6 @@ class Interface
   def end_session
     puts 'Goodbye, User!'
   end
-
-  private
-
-  attr_accessor :stations, :trains, :routes
 
   def choose_from(obj_list)
     puts 'Выберите вариант'
