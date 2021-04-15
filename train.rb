@@ -13,7 +13,7 @@ class Train
 
   def add_car(car)
     car.change_owner(self)
-    cars << car
+    cars << car if car.type == type
   end
 
   def remove_car

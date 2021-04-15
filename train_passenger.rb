@@ -10,8 +10,4 @@ class PassengerTrain < Train
     super
     @type = 'passenger'
   end
-
-  def add_car(car)
-    super if car.type == type
-  end
 end
