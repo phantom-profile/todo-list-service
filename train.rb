@@ -1,14 +1,30 @@
 # frozen_string_literal: true
 
+require_relative 'producer_name_module'
+require_relative 'instance_counter'
+
 # Train with speed, cars, which locates on station and moves on its route
 class Train
-  attr_reader :train_name, :cars
+  include ProducerName
+  include InstanceCounter
+
+  @instances = 0
+
+  attr_reader :train_name, :cars, :number
   attr_accessor :speed
 
-  def initialize(train_name)
+  def self.find(number)
+    filtered = @@trains.filter { |train| train.number == number }
+    filtered[0]
+  end
+
+  def initialize(train_name, number)
     @train_name = train_name
+    @number = number
     @cars = []
     @speed = 0
+    @@trains << self
+    register_instances
   end
 
   def add_car(car)
@@ -69,6 +85,8 @@ class Train
   end
 
   protected
+
+  @@trains = []
 
   # all these attrs are needed inside this and child classes but not for client code
   attr_accessor :current_station_index, :route

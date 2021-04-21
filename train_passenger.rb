@@ -6,7 +6,9 @@ require_relative 'train'
 class PassengerTrain < Train
   attr_reader :type
 
-  def initialize(train_name)
+  @instances = 0
+
+  def initialize(train_name, number)
     super
     @type = 'passenger'
   end

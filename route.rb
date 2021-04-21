@@ -1,11 +1,18 @@
 # frozen_string_literal: true
 
+require_relative 'instance_counter'
+
 # Route which contains many stations and also is way for trains
 class Route
+  include InstanceCounter
+
   attr_reader :stations
+
+  @instances = 0
 
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
+    register_instances
   end
 
   def add_mid_station(station)
