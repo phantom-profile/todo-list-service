@@ -8,8 +8,6 @@ class Route
 
   attr_reader :stations
 
-  @instances = 0
-
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
     register_instances

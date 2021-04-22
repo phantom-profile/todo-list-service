@@ -8,8 +8,6 @@ class Train
   include ProducerName
   include InstanceCounter
 
-  @instances = 0
-
   attr_reader :train_name, :cars, :number
   attr_accessor :speed
 

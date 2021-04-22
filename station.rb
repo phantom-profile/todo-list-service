@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
-# Location for trains and also objects included in routs
-
 require_relative 'instance_counter'
 
+# Location for trains and also objects included in routs
 class Station
   include InstanceCounter
   attr_reader :name, :trains
-
-  @instances = 0
 
   def self.all
     @@all ||= []
