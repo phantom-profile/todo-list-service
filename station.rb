@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
+require_relative 'instance_counter'
+
 # Location for trains and also objects included in routs
 class Station
+  include InstanceCounter
   attr_reader :name, :trains
+
+  def self.all
+    @@all ||= []
+  end
 
   def initialize(name)
     @name = name
     @trains = []
+    self.class.all << self
+    register_instances
   end
 
   def meet_train(train)
@@ -33,4 +42,6 @@ class Station
 
   # Client code mustn't have write-access to class attrs directly
   attr_writer :trains
+
+  @@stations = []
 end
