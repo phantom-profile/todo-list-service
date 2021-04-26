@@ -5,3 +5,5 @@ This is my repo for Ruby tasks
 2 task: separate classes in files and make child classes
 
 3 task: make module-mixin and class instance attributes
+
+4 task: exceptions and regaps

@@ -85,8 +85,17 @@ class Interface
     name = gets.chomp
     puts 'тип поезда "груз" или "пасс"'
     type = gets.chomp
-    trains << CargoTrain.new(name) if type == 'груз'
-    trains << PassengerTrain.new(name) if type == 'пасс'
+    raise 'Cинтаксическая ошибка, варианты: "груз", "пасс"' if type != 'груз' && type != 'пасс'
+
+    puts 'Номер поезда в формате a1a-1a'
+    number = gets.chomp
+    trains << CargoTrain.new(name, number) if type == 'груз'
+    trains << PassengerTrain.new(name, number) if type == 'пасс'
+    puts 'Поезд успешно создан!'
+  rescue RuntimeError => e
+    puts e
+    puts 'Попробуйте снова:'
+    retry
   end
 
   def set_train_speed

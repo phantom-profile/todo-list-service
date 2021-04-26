@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 require_relative 'producer_name_module'
+require_relative 'validator'
 
 # component of train
 class Car
   include ProducerName
+  include Validator
+
+  TYPES = %w[cargo passenger].freeze
 
   def change_owner(train)
     return self.owner = train if owner.nil?
@@ -16,4 +20,8 @@ class Car
   protected
 
   attr_accessor :owner
+
+  def validate!
+    validate_type!(TYPES, type)
+  end
 end

@@ -7,7 +7,8 @@ class PassengerCar < Car
   attr_reader :type
 
   def initialize
-    super
     @type = 'passenger'
+    super
+    validate!
   end
 end

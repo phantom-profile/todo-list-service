@@ -2,14 +2,19 @@
 
 require_relative 'producer_name_module'
 require_relative 'instance_counter'
+require_relative 'validator'
 
 # Train with speed, cars, which locates on station and moves on its route
 class Train
   include ProducerName
   include InstanceCounter
+  include Validator
 
   attr_reader :train_name, :cars, :number
   attr_accessor :speed
+
+  NUM_PATTERN = /^[\w\d]{3}-?[\w\d]{2}$/i.freeze
+  TYPES = %w[cargo passenger].freeze
 
   def self.find(number)
     filtered = @@trains.filter { |train| train.number == number }
@@ -21,6 +26,7 @@ class Train
     @number = number
     @cars = []
     @speed = 0
+    validate!
     @@trains << self
     register_instances
   end
@@ -89,4 +95,10 @@ class Train
   # all these attrs are needed inside this and child classes but not for client code
   attr_accessor :current_station_index, :route
   attr_writer :cars
+
+  def validate!
+    validate_name!(number, NUM_PATTERN)
+    validate_name!(train_name)
+    validate_type!(TYPES, type)
+  end
 end
