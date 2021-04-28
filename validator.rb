@@ -26,4 +26,9 @@ module Validator
   end
 
   def validate!; end
+
+  def show_error(error)
+    puts error
+    puts 'Попробуйте снова:'
+  end
 end

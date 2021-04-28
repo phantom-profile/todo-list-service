@@ -14,11 +14,15 @@ class CargoCar < Car
     validate!
   end
 
-  def load(volume)
+  def load_cargo(volume)
     return if (self.volume - volume).negative?
 
     self.volume -= volume
     self.occupied_volume += volume
+  end
+
+  def to_s
+    super + "Empty volume #{volume}, occupied volume #{occupied_volume}"
   end
 
   protected

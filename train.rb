@@ -89,7 +89,7 @@ class Train
   end
 
   def to_s
-    "train #{train_name} - type #{type}"
+    "Train number #{number} of type #{type}. Cars' number - #{cars.size}"
   end
 
   protected

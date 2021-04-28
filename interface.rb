@@ -9,8 +9,12 @@ require_relative 'car_passenger'
 require_relative 'train_cargo'
 require_relative 'train_passenger'
 
+require_relative 'validator'
+
 # interface for train railways system control
 class Interface
+  include Validator
+
   def initialize
     @trains = []
     @stations = []
@@ -21,7 +25,7 @@ class Interface
   def run!
     choice = 0
 
-    while choice != 13
+    while choice != 16
 
       choice = gets.chomp.to_i
       case choice
@@ -50,6 +54,12 @@ class Interface
       when 12
         display_station_trains
       when 13
+        display_train_cars
+      when 14
+        place_passenger
+      when 15
+        load_cargo
+      when 16
         end_session
       else
         puts 'Некорректный ввод'
@@ -76,7 +86,10 @@ class Interface
          10 - переместить поезд назад
          11 - посмотреть список станций на маршруте
          12 - посмотреть список поездов на станции
-         13 - выход
+         13 - посмотреть список вагонов в поезде
+         14 - посадить в вагон человека
+         15 - погрузить товары в вагон
+         16 - выход
     MENU
   end
 
@@ -93,8 +106,7 @@ class Interface
     trains << PassengerTrain.new(name, number) if type == 'пасс'
     puts 'Поезд успешно создан!'
   rescue RuntimeError => e
-    puts e
-    puts 'Попробуйте снова:'
+    show_error(e)
     retry
   end
 
@@ -105,8 +117,16 @@ class Interface
 
   def add_train_car
     train = choose_from(trains)
-    train.add_car(PassengerCar.new)
-    train.add_car(CargoCar.new)
+    if train.type == 'passenger'
+      puts 'Количество пассажирских мест:'
+      train.add_car(PassengerCar.new(gets.chomp.to_i))
+    else
+      puts 'Грузовая вместимость:'
+      train.add_car(CargoCar.new(gets.chomp.to_i))
+    end
+  rescue RuntimeError => e
+    show_error(e)
+    retry
   end
 
   def remove_train_car
@@ -168,7 +188,27 @@ class Interface
 
   def display_station_trains
     station = choose_from(stations)
-    puts station.trains
+    station.for_train_do { |train| puts train }
+  end
+
+  def display_train_cars
+    train = choose_from(trains)
+    train.for_car_do { |car| puts car }
+  end
+
+  def place_passenger
+    chosen_train = choose_from(trains.filter { |train| train.speed.zero? && train.type == 'passenger' })
+    car = choose_from(chosen_train.cars)
+    car.take_sit
+    puts 'Человек занял место!'
+  end
+
+  def load_cargo
+    chosen_train = choose_from(trains.filter { |train| train.speed.zero? && train.type == 'cargo' })
+    car = choose_from(chosen_train.cars)
+    puts 'Какое количество груза поместить?'
+    car.load_cargo(gets.chomp.to_i)
+    puts 'Товар успешно загружен!'
   end
 
   def end_session

@@ -4,24 +4,28 @@ require_relative 'car'
 
 # component of passenger train
 class PassengerCar < Car
-  attr_reader :type, :empty_places, :occupied_places
+  attr_reader :type, :empty_sits, :occupied_sits
 
-  def initialize(places)
-    @empty_places = places
-    @occupied_places = 0
+  def initialize(sits)
+    @empty_sits = sits
+    @occupied_sits = 0
     @type = 'passenger'
     super()
     validate!
   end
 
-  def take_place
-    return if self.empty_places.zero?
+  def take_sit
+    return if empty_sits.zero?
 
-    self.empty_places -= 1
-    self.occupied_places += 1
+    self.empty_sits -= 1
+    self.occupied_sits += 1
+  end
+
+  def to_s
+    super + "Empty sits #{empty_sits}, occupied sits #{occupied_sits}"
   end
 
   protected
 
-    attr_writer :empty_places, :occupied_places
+  attr_writer :empty_sits, :occupied_sits
 end
