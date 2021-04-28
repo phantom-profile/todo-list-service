@@ -84,6 +84,10 @@ class Train
     current_station.meet_train(self)
   end
 
+  def for_car_do(&block)
+    cars.each(&block)
+  end
+
   def to_s
     "train #{train_name} - type #{type}"
   end
@@ -99,6 +103,5 @@ class Train
   def validate!
     validate_name!(number, NUM_PATTERN)
     validate_name!(train_name)
-    validate_type!(TYPES, type)
   end
 end

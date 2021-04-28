@@ -7,3 +7,5 @@ This is my repo for Ruby tasks
 3 task: make module-mixin and class instance attributes
 
 4 task: exceptions and regaps
+
+5 task: blocks and lambda functions
