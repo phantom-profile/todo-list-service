@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require_relative 'instance_counter'
+require_relative 'validator'
 
 # Location for trains and also objects included in routs
 class Station
   include InstanceCounter
+  include Validator
   attr_reader :name, :trains
 
   def self.all
@@ -13,6 +15,7 @@ class Station
 
   def initialize(name)
     @name = name
+    validate!
     @trains = []
     self.class.all << self
     register_instances
@@ -44,4 +47,8 @@ class Station
   attr_writer :trains
 
   @@stations = []
+
+  def validate!
+    validate_name!(name)
+  end
 end
