@@ -11,8 +11,7 @@ class Car
   @@number = 1
 
   def initialize
-    @number = @@number
-    @@number += 1
+    set_number
   end
 
   TYPES = %w[cargo passenger].freeze
@@ -34,5 +33,10 @@ class Car
 
   def validate!
     validate_type!(TYPES, type)
+  end
+
+  def set_number
+    self.number = @@number
+    @@number += 1
   end
 end
