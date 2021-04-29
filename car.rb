@@ -8,6 +8,12 @@ class Car
   include ProducerName
   include Validator
 
+  @@number = 1
+
+  def initialize
+    set_number
+  end
+
   TYPES = %w[cargo passenger].freeze
 
   def change_owner(train)
@@ -17,11 +23,20 @@ class Car
     self.owner = train
   end
 
+  def to_s
+    "Car number #{number} of #{type} type. "
+  end
+
   protected
 
-  attr_accessor :owner
+  attr_accessor :owner, :number
 
   def validate!
     validate_type!(TYPES, type)
+  end
+
+  def set_number
+    self.number = @@number
+    @@number += 1
   end
 end

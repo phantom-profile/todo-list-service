@@ -2,6 +2,7 @@
 
 require_relative 'instance_counter'
 require_relative 'validator'
+require_relative 'train'
 
 # Location for trains and also objects included in routs
 class Station
@@ -39,6 +40,10 @@ class Station
 
   def to_s
     "Station - #{name}"
+  end
+
+  def for_train_do(&block)
+    trains.each(&block)
   end
 
   private
