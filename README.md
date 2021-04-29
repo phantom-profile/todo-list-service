@@ -9,3 +9,5 @@ This is my repo for Ruby tasks
 4 task: exceptions and regaps
 
 5 task: blocks and lambda functions
+
+6 task: make modules which dynamically add methods
