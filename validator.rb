@@ -1,34 +1,46 @@
 # frozen_string_literal: true
 
 # mixin for validating attributes in RW-system
-module Validator
-  def valid?
-    validate!
-    true
-  rescue RuntimeError
-    false
+module Validation
+  def self.included(base)
+    base.extend ClassMethods
+    base.include(InstanceMethods)
   end
 
-  protected
-
-  def validate_name!(obj_name, reg_pattern = /.*/)
-    raise "#{obj_name} must not be nil" if obj_name.nil?
-    raise "#{obj_name} name must not be empty" if obj_name.empty?
-    raise "#{obj_name} does not fit pattern" if obj_name !~ reg_pattern
+  module ClassMethods
+    def validate(attr, valid_type, *args)
+      var_name = "@#{attr}".to_sym
+      case valid_type
+      when :presence
+        define_method("#{attr}_presence_valid") do
+          raise 'Nil attribute' if instance_variable_get(var_name).nil?
+          raise 'Empty line' if instance_variable_get(var_name).empty?
+        end
+      when :format
+        define_method("#{attr}_format_valid") do
+          raise 'Does not fit pattern' if instance_variable_get(var_name) !~ args[0]
+        end
+      else
+        define_method("#{attr}_type_valid") do
+          raise 'Wrong argument type' unless instance_variable_get(var_name).is_a?(args[0])
+        end
+      end
+    end
   end
 
-  def validate_type!(types, type)
-    raise "#{type} must be in #{types}" unless types.include?(type)
-  end
+  module InstanceMethods
+    def validate!
+      validate_regexp = /.+(valid)$/
+      methods.each do |method|
+        send(method) unless method.to_s !~ validate_regexp
+      end
+    end
 
-  def validate_size(self_size, needed_size)
-    raise "Size must be #{needed_size}, not #{self_size}" if self_size < needed_size
-  end
-
-  def validate!; end
-
-  def show_error(error)
-    puts error
-    puts 'Попробуйте снова:'
+    def valid?
+      validate!
+      true
+    rescue RuntimeError
+      false
+    end
   end
 end

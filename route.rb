@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
 require_relative 'instance_counter'
-require_relative 'validator'
 
 # Route which contains many stations and also is way for trains
 class Route
   include InstanceCounter
-  include Validator
 
   attr_reader :stations
 
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
-    validate!
     register_instances
   end
 

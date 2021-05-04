@@ -11,7 +11,6 @@ class PassengerCar < Car
     @occupied_sits = 0
     @type = 'passenger'
     super()
-    validate!
   end
 
   def take_sit

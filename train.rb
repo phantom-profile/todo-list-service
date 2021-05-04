@@ -8,13 +8,15 @@ require_relative 'validator'
 class Train
   include ProducerName
   include InstanceCounter
-  include Validator
+  include Validation
+
+  NUM_PATTERN = /^[\w\d]{3}-?[\w\d]{2}$/i.freeze
 
   attr_reader :train_name, :cars, :number
   attr_accessor :speed
 
-  NUM_PATTERN = /^[\w\d]{3}-?[\w\d]{2}$/i.freeze
-  TYPES = %w[cargo passenger].freeze
+  validate :number, :format, NUM_PATTERN
+  validate :speed, :type, Integer
 
   def self.find(number)
     filtered = @@trains.filter { |train| train.number == number }
@@ -100,8 +102,4 @@ class Train
   attr_accessor :current_station_index, :route
   attr_writer :cars
 
-  def validate!
-    validate_name!(number, NUM_PATTERN)
-    validate_name!(train_name)
-  end
 end

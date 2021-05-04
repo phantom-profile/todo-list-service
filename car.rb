@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'producer_name_module'
-require_relative 'validator'
 
 # component of train
 class Car
   include ProducerName
-  include Validator
 
   @@number = 1
 
@@ -30,10 +28,6 @@ class Car
   protected
 
   attr_accessor :owner, :number
-
-  def validate!
-    validate_type!(TYPES, type)
-  end
 
   def set_number
     self.number = @@number

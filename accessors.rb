@@ -4,7 +4,6 @@
 module Accessors
   def self.included(base)
     base.extend ClassMethods
-    base.include(InstanceMethods)
   end
 
   # methods for special access to attrs
@@ -20,6 +19,7 @@ module Accessors
             instance_variable_get("@#{name}_h")
           end
         end
+        define_method(name) { instance_variable_get(var_name) }
 
         define_method("#{name}=") do |value|
           instance_variable_set(var_name, value)

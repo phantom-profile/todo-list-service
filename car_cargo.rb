@@ -11,7 +11,6 @@ class CargoCar < Car
     @volume = volume
     @occupied_volume = 0
     super()
-    validate!
   end
 
   def load_cargo(volume)
