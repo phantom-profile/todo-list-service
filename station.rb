@@ -11,8 +11,6 @@ class Station
 
   attr_reader :name, :trains
 
-  validate :name, :presence
-
   def self.all
     @@all ||= []
   end
@@ -49,11 +47,14 @@ class Station
     trains.each(&block)
   end
 
+  def validate!
+    validate_presence(name)
+  end
+
   private
 
   # Client code mustn't have write-access to class attrs directly
   attr_writer :trains
 
   @@stations = []
-
 end
