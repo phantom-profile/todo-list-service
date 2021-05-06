@@ -101,5 +101,4 @@ class Train
   # all these attrs are needed inside this and child classes but not for client code
   attr_accessor :current_station_index, :route
   attr_writer :cars
-
 end

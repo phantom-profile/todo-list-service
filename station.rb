@@ -55,5 +55,4 @@ class Station
   attr_writer :trains
 
   @@stations = []
-
 end
