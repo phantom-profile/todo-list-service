@@ -3,6 +3,7 @@
 # mixin for validating attributes in RW-system
 module Validation
   def self.included(base)
+    base.extend(ClassMethods)
     base.include(InstanceMethods)
   end
 
@@ -18,7 +19,9 @@ module Validation
       validation << args[0] unless args.empty?
       validations << validation
     end
+  end
 
+  module InstanceMethods
     def valid?
       validate!
       true
