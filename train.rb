@@ -15,9 +15,6 @@ class Train
   attr_reader :train_name, :cars, :number
   attr_accessor :speed
 
-  validate :number, :format, NUM_PATTERN
-  validate :speed, :type, Integer
-
   def self.find(number)
     filtered = @@trains.filter { |train| train.number == number }
     filtered[0]
@@ -92,6 +89,12 @@ class Train
 
   def to_s
     "Train number #{number} of type #{type}. Cars' number - #{cars.size}"
+  end
+
+  def validate!
+    validate_format(number, NUM_PATTERN)
+    validate_presence(number)
+    validate_type(speed, Integer)
   end
 
   protected

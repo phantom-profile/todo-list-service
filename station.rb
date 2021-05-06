@@ -11,8 +11,6 @@ class Station
 
   attr_reader :name, :trains
 
-  validate :name, :presence
-
   def self.all
     @@all ||= []
   end
@@ -47,6 +45,10 @@ class Station
 
   def for_train_do(&block)
     trains.each(&block)
+  end
+
+  def validate!
+    validate_presence(name)
   end
 
   private
