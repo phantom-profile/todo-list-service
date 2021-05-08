@@ -32,13 +32,14 @@ module Validation
     def validate!
       self.class.validations.each do |validation|
         var_name = "@#{validation[1]}".to_sym
+        var = instance_variable_get(var_name)
         case validation[0]
         when :presence
-          validate_presence(var_name)
+          send('validate_presence', var)
         when :format
-          validate_format(var_name, validation[2])
+          send('validate_format', var, validation[2])
         when :type
-          validate_type(var_name, validation[2])
+          send('validate_type', var, validation[2])
         else
           'unknown validation'
         end
@@ -49,15 +50,33 @@ module Validation
 
     def validate_presence(attr)
       raise 'Nil attribute' if attr.nil?
-      raise 'Empty line' if instance_variable_get(attr).empty?
+      raise 'Empty line' if attr.to_s.empty?
     end
 
     def validate_format(attr, regex)
-      raise 'Does not fit pattern' if instance_variable_get(attr) !~ regex
+      raise 'Does not fit pattern' if attr !~ regex
     end
 
     def validate_type(attr, type)
-      raise 'Wrong argument type' unless instance_variable_get(attr).instance_of?(type)
+      raise 'Wrong argument type' unless attr.instance_of?(type)
     end
+  end
+end
+
+class Test
+  include Validation
+
+  validate :a, :presence
+  validate :b, :presence
+  validate :a, :type, String
+
+  def initialize
+    @a = 1
+    @b = ''
+    @c = 'a'
+  end
+
+  def print(msg)
+    puts @c + msg
   end
 end
