@@ -62,21 +62,3 @@ module Validation
     end
   end
 end
-
-class Test
-  include Validation
-
-  validate :a, :presence
-  validate :b, :presence
-  validate :a, :type, String
-
-  def initialize
-    @a = 1
-    @b = ''
-    @c = 'a'
-  end
-
-  def print(msg)
-    puts @c + msg
-  end
-end
