@@ -33,22 +33,13 @@ module Validation
       self.class.validations.each do |validation|
         var_name = "@#{validation[1]}".to_sym
         var = instance_variable_get(var_name)
-        case validation[0]
-        when :presence
-          send('validate_presence', var)
-        when :format
-          send('validate_format', var, validation[2])
-        when :type
-          send('validate_type', var, validation[2])
-        else
-          'unknown validation'
-        end
+        send("validate_#{validation[0]}", var, validation[2])
       end
     end
 
     protected
 
-    def validate_presence(attr)
+    def validate_presence(attr, *_args)
       raise 'Nil attribute' if attr.nil?
       raise 'Empty line' if attr.to_s.empty?
     end
@@ -58,7 +49,7 @@ module Validation
     end
 
     def validate_type(attr, type)
-      raise 'Wrong argument type' unless attr.instance_of?(type)
+      raise 'Wrong argument type' unless attr.is_a?(type)
     end
   end
 end
