@@ -2,19 +2,18 @@
 
 class PaymentsController < ApplicationController
   def create
-    product = Product.find(params[:product_id])
-    payment_result = CloudPayment.process(
-      user_uid: current_user.cloud_payments_uid,
-      amount_cents: params[:amount] * 100,
-      currency: 'RUB'
-    )
+    result = Payments::Operations::Create.call(params: creation_job_params, current_user: current_user)
 
-    if payment_result[:status] == 'completed'
-      product_access = ProductAccess.create(user: current_user, product: product)
-      OrderMailer.product_access_email(product_access).deliver_now
-      render json: { product_access: product_access.as_json }, status: 201
+    if result.success?
+      render json: { product_access: result[:product_access].as_json }, status: 201
     else
       render json: { product_access: nil, error: 'something went wrong' }, status: 400
     end
+  end
+
+  private
+
+  def creation_job_params
+    params.permit(:amount, :product_id)
   end
 end
