@@ -11,7 +11,7 @@ class PaymentsController < ApplicationController
 
     if payment_result[:status] == 'completed'
       product_access = ProductAccess.create(user: current_user, product: product)
-      OrderMailer.product_access_email(product_access).deliver_later
+      OrderMailer.product_access_email(product_access).deliver_now
       render json: { product_access: product_access.as_json }, status: 201
     else
       render json: { product_access: nil, error: 'something went wrong' }, status: 400
