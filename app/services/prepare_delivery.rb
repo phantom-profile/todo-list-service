@@ -1,7 +1,7 @@
 class PrepareDelivery
   TRUCKS = {
-    kamaz: 3000,
-    gazel: 1000
+    gazel: 1000,
+    kamaz: 3000
   }.freeze
 
   MESSAGES = {
@@ -12,11 +12,11 @@ class PrepareDelivery
   SUCCESS = :ok
   FAIL = :error
 
-  class DeliveryPreparationError < StandardError; end
+  DeliveryPreparationError = Class.new(StandardError)
 
-  def initialize(order:, destination:, delivery_date:)
+  def initialize(order:, address:, delivery_date:)
     @order = order
-    @destination = destination
+    @address = address
     @delivery_date = delivery_date
   end
 
@@ -25,11 +25,11 @@ class PrepareDelivery
       truck: available_truck,
       weight: @order.weight,
       order_number: @order.id,
-      address: @destination,
+      address: @address,
       status: SUCCESS
     }
 
-    validate_data!
+    validate!
     @result
   rescue DeliveryPreparationError => e
     @result[:status] = FAIL
@@ -37,9 +37,9 @@ class PrepareDelivery
     @result
   end
 
-  def validate_data!
+  def validate!
     raise DeliveryPreparationError, MESSAGES.fetch(:past_date) if @delivery_date < Time.current
-    raise DeliveryPreparationError, MESSAGES.fetch(:no_address) if @destination.invalid?
+    raise DeliveryPreparationError, @address.error_message if @address.invalid?
     raise DeliveryPreparationError, MESSAGES.fetch(:no_car) if available_truck.nil?
   end
 
@@ -60,7 +60,7 @@ class Order
   end
 
   def weight
-    @weight ||= products.map(&:weight).sum
+    @weight ||= products.sum(&:weight)
   end
 end
 
@@ -77,12 +77,21 @@ class Address
     "д. 5"
   end
 
-  def filled?
+  def valid?
     [city, street, house].all?(&:present?)
   end
 
+  def error_message
+    attrs = {
+      city: city,
+      street: street,
+      house: house
+    }
+    attrs.map { |name, value| "#{name} is blank" if value.blank? }.compact.join(', ')
+  end
+
   def invalid?
-    !filled?
+    !valid?
   end
 end
 
@@ -95,12 +104,12 @@ class MyTest
   end
 
   def positive_test
-    result = PrepareDelivery.new(order: Order.new, destination: Address.new, delivery_date: 1.day.from_now).perform
+    result = PrepareDelivery.new(order: Order.new, address: Address.new, delivery_date: 1.day.from_now).perform
     raise 'test failed' if result[:status] != PrepareDelivery::SUCCESS
   end
 
   def negative_test
-    result = PrepareDelivery.new(order: Order.new, destination: Address.new, delivery_date: 1.day.ago).perform
+    result = PrepareDelivery.new(order: Order.new, address: Address.new, delivery_date: 1.day.ago).perform
     raise 'test failed' if result[:status] != PrepareDelivery::FAIL
   end
 end
